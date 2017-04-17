@@ -1,0 +1,36 @@
+<%= @question %><br />
+<img src="/qi/<%= @id %>" style="width: 100%; max-width: 400px;" />
+<br />
+<% unless @current_user.nickname == "admin" %>
+
+	<% unless @summary %>
+		<%= form_tag("/r", method: "post") do %>
+			<%= hidden_field_tag(:question_id, @id) %>
+			<div class="error"><%= @error %></div>
+			<div><%= text_field_tag(:response, "", placeholder: "Your Guess", style: "text-align: center") %> <%= submit_tag("Send") %></div>
+		<% end %>
+	<% else %>
+		<div>You answered $<%= @answer %></div>
+		<div>Please wait while others respond...</div>
+	<% end %>
+<% else %>
+	<button id="last">Last</button> <button id="score">Get Scores</button> <button id="next">Next</button>
+	<br /><br />
+	<div id="out0"></div>
+	<div id="out"></div>
+	<div id="out2"></div>
+<% end %>
+
+<script type="text/javascript">
+	tick(<%= @id %>);
+	
+	<% if @current_user.nickname == "admin" %>
+		$("#last").click(function() {
+			window.location = window.location.origin + "/q/" + <%= @prev_question %>;
+		});
+		
+		$("#next").click(function() {
+			window.location = window.location.origin + "/q/" + <%= @next_question %>;
+		});
+	<% end %>
+</script>

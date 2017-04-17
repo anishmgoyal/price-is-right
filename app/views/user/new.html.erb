@@ -1,0 +1,5 @@
+<%= form_tag("/login", method: "post", id: "login") do %>
+	<div><%= label_tag(:nickname, "Enter your Nickname") %></div>
+	<div class="error"><%= @error %></div>
+	<div><%= text_field_tag(:nickname) %> <%= submit_tag("Go!") %></div>
+<% end %>

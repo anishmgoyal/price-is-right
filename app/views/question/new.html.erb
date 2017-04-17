@@ -1,0 +1,9 @@
+<%= form_tag("/qc", method: "post", multipart: true, class: "question") do %>
+	<div><%= label_tag(:question, "Question Text") %></div>
+	<div><%= text_field_tag(:question) %></div>
+	<div><%= label_tag(:file, "Image") %></div>
+	<div><%= file_field_tag(:file, accept: "image/*") %></div>
+	<div><%= label_tag(:answer, "Answer") %></div>
+	<div><%= text_field_tag(:answer) %></div>
+	<div><%= submit_tag("Go!", style: "vertical-align: 10%") %> &nbsp;<a style="color: #eee; text-shadow: 0 0 4px black; text-decoration: none; vertical-align: text-bottom" href="/ql">Cancel</a></div>
+<% end %>

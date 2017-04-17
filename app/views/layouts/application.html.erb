@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>The Price Is Right</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <link href="data:image/x-icon;base64,AAABAAEAEBACAAAAAACwAAAAFgAAACgAAAAQAAAAIAAAAAEAAQAAAAAAQAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAKoAAAGAAAAH4AAAH/AAABmYAAAZmAAAAZgAAAGYAAAH8AAAD+AAABmAAAAZgAAAGZgAABmYAAAP+AAAB+AAAAGAAAD+fwAA+B8AAOAPAADmZwAA5mcAAP5nAAD+ZwAA+A8AAPAfAADmfwAA5n8AAOZnAADmZwAA8AcAAPgfAAD+fwAA" rel="icon" type="image/x-icon" />
+  <link href='https://fonts.googleapis.com/css?family=Nunito:400,700' rel='stylesheet' type='text/css'>
+  <%= javascript_include_tag "application" %>
+  <%= csrf_meta_tags %>
+  <script type="text/javascript">
+
+  	function tick(current) {
+  		window.current = current;
+  		setInterval(tickInt.bind(this, current), 1000);
+  		tickInt(current);
+  	}
+
+  	function tickInt(current) {
+  		$.ajax({
+  			url: "/tick",
+  			dataType: "json",
+  			cache: false,
+  			success: function(current, data) {
+  				<% if @current_user && @current_user.nickname != "admin" %>
+	  				if(data.question == -1 && current != -1) {
+	  					window.location = window.location.origin + "/wait";
+	  				}
+	  				else if(data.question != current) {
+	  					window.location = window.location.origin + "/q/" + data.question;
+	  				}
+	  			<% else %>
+	  				if(typeof data.count !== "undefined") {
+	  					$("#out0").text("There are currently " + data.count + " responses.");
+	  				}
+	  			<% end %>
+  			}.bind(this, current)
+  		});
+  	}
+
+  	$(document).ready(function() {
+
+  		$("#score").click(function() {
+  			$("#out0").remove();
+  			$.ajax({
+  				url: "/qa/" + window.current,
+  				dataType: "json",
+  				cache: false,
+  				success: function(data) {
+  					var resp = "";
+  					if(data.response) resp += "The closest answer was $" + data.response.response;
+  					if(data.user) resp += " by " + data.user.nickname + ".";
+  					var resp2 = "The correct answer is $" + data.question.answer + ".";
+  					$("#out").text(resp);
+  					$("#out2").text(resp2);
+  				}
+  			})
+  		});
+
+  		/*$("#next").click(function() {
+  			var next = window.current * 1 + 1;
+  			window.location = window.location.origin + "/q/" + next;
+  		});
+
+  		$("#last").click(function() {
+  			var next = window.current * 1 - 1;
+  			window.location = window.location.origin + "/q/" + next;
+  		});*/
+
+  		$("#login").submit(function(e) {
+  			console.log("Submitted");
+  			if($("input[name=nickname").val() == "admin") {
+  				console.log("IS ADMIN");
+  				if($("#password").length == 0) {
+  					e.preventDefault();
+  					$("#login").append('<input style="margin-bottom: 5px;" type="password" name="password" id="password" /><br />');
+  					$("#password").focus();
+  					$("#login").find("input[type=submit]").remove().appendTo("#login");
+  					return false;
+  				}	
+  			}
+  		});
+
+  	});
+
+  </script>
+  <style>
+  	html {
+  		height: 100%;
+  	}
+  	body {
+    	background-attachment: fixed;
+      background-color: #3b3;
+  		background-image: radial-gradient(circle, #3b3, #393);
+  		background-position: center center;
+  		background-repeat: no-repeat;
+  		font-family: "Nunito", "Helvetica Neue", Arial, sans-serif;
+  		padding-top: 40px;
+  		text-align: center;
+  		height: 100%;
+  		margin: 0;
+
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      -ms-box-sizing: border-box;
+      -o-box-sizing: border-box;
+
+  		user-select: none;
+  		-moz-user-select: none;
+  		-webkit-user-select: none;
+  		-o-user-select: none;
+  		-ms-user-select: none;
+  	}
+  	nav {
+  		color: white;
+  		position: fixed;
+  		top: 0;
+  		left: 0;
+  		padding: 10px 0;
+      background-color: #333;
+  		background-image: linear-gradient(#333, #222);
+  		border-bottom: 1px solid black;
+  		width: 100%;
+  		margin: 0;
+  		box-shadow: 0 1px 4px 0 black;
+
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      -ms-box-sizing: border-box;
+      -o-box-sizing: border-box;
+  	}
+  	img {
+  		border: 1px solid #333;
+  		box-shadow: 0 0 10px #222;
+  		margin: 10px 0;
+  	}
+  	div {
+  		margin-bottom: 4px;
+  	}
+  	input[type=text], input[type=password] {
+  		padding: 6px 10px;
+  		border: 1px solid #777;
+  		box-shadow: inset 0 0 2px 1px #eee;
+  		background-image: linear-gradient(#eee, #fff);
+  		border-radius: 4px;
+  		font-family: "Nunito", "Helvetica Neue", Arial, sans-serif;
+  	}
+  	::-webkit-input-placeholder {
+	    color: #555;
+	}
+	:-moz-placeholder {
+	    color:    #555;
+	}
+	::-moz-placeholder {
+	    color:    #555;
+	}
+	:-ms-input-placeholder {
+	    color:    #555;
+	}
+  	input[type=submit], button {
+  		padding: 6px 20px;
+  		background-image: linear-gradient(#333, #222);
+  		border: none;
+  		border-radius: 4px;
+  		color: #ddd;
+  		font-family: "Nunito", "Helvetica Neue", Arial, sans-serif;
+  	}
+  	.error {
+  		color: #ba2323;
+  	}
+
+  	@media only screen and (max-width: 40em) {
+  		table {
+  			width: 90%;
+  		}
+  		.question {
+  			width: 80%;
+  		}
+  	}
+  	@media only screen and (min-width: 40.063em) and (max-width: 64em) {
+  		table {
+  			width: 70%;
+  		}
+  		.question {
+  			width: 70%;
+  		}
+  	}
+  	@media only screen and (min-width: 64.063em) {
+  		table {
+  			width: 600px;
+  		}
+  		.question {
+  			width: 50%;
+  		}
+  	}
+  	.question {
+  		margin: auto;
+  		text-align: left;
+  	}
+  	.question input[type=text], .question input[type=password], .question input[type=file] {
+  		width: 100%;
+  	}
+  	.question input[type=file] {
+  		padding: 6px 10px;
+  		border: 1px solid #777;
+  		box-shadow: inset 0 0 2px 1px #eee;
+  		background-image: linear-gradient(#eee, #fff);
+  		border-radius: 4px;
+  		font-family: "Nunito", "Helvetica Neue", Arial, sans-serif;
+  	}
+  </style>
+</head>
+<body>
+<nav>
+	<span style="color: gold">$</span>
+	<% if @current_user && @current_user.nickname != "admin" %>
+		<%= h @current_user.nickname %>
+	<% elsif @current_user && @current_user.nickname == "admin" %>
+		<a href="/ql" style="color: white; text-decoration: none;">The Price Is Right</a>
+	<% else %>
+		The Price Is Right
+	<% end %>
+	<span style="color: gold">$</span>
+	<% if @current_user %>
+		<div style="display: inline-block; float: right; padding: 0; right: 30px; margin: 0; position: absolute;">
+			<a style="color: white; text-decoration: none;" href="/logout">Quit</a>
+		</div>
+	<% end %>
+</nav>
+
+<table style="margin: auto; margin-top: 40px; min-height: 80%">
+	<tr><td>
+		<%= yield %>
+	</tr></td>
+</table>
+
+</body>
+</html>

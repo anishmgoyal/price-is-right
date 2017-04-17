@@ -1,0 +1,20 @@
+<div style="text-align: left;">
+	<button><a style="color: white; text-decoration: none" href="/q/1">Home</a></button>
+	<button><a style="color: white; text-decoration: none" href="/qn">Create New</a></button>
+	<button onclick="$('.price').show(); $(this).remove();">Show Prices</button>
+</div>
+<% @questions.each do |question| %>
+	<div style="margin: 0; padding: 0; width: 100%; display: inline-block; vertical-align: top;"><!--
+		--><div style="display: inline-block; width: 30%; margin: 0; padding: 0;">
+			<a href="/q/<%= question.id %>"><img style="max-width: 100%;" src="/qi/<%= question.id %>" /></a>
+		</div><!--
+		--><div style="display: inline-block; width: 65%; margin: 0; margin-left: 5%; padding: 0; vertical-align: top; text-align: left;">
+			<div style="margin-top: 10px;"><%= question.question %></div>
+			<div class="price" style="display: none">$<%= question.answer %></div>
+			<div>
+				<button><a style="color: white; text-decoration: none" href="/qb/<%= question.id %>">Move to Bottom</a></button>
+				<button><a style="color: white; text-decoration: none" href="/qd/<%= question.id %>">Delete</a></button>
+			</div>
+		</div><!--
+	--></div>
+<% end %>
